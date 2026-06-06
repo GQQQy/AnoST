@@ -1,0 +1,13 @@
+error_ratio,mechanism,challenge_window_s,mean_raw_challenges,mean_path_checked_challenges
+5,No Optimization,72.0,100,94.24
+5,Path Checking,70.48128,100,94.24
+5,Blacklist,51.32000000000001,100,94.24
+5,Combined Optimization,50.682137600000004,100,94.24
+10,No Optimization,118.0,200,176.34
+10,Path Checking,109.23248000000001,200,176.34
+10,Blacklist,70.64000000000001,200,176.34
+10,Combined Optimization,66.95764160000002,200,176.34
+20,No Optimization,210.0,400,314.04
+20,Path Checking,174.22688000000002,400,314.04
+20,Blacklist,109.28000000000002,400,314.04
+20,Combined Optimization,94.25528960000001,400,314.04

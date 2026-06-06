@@ -683,7 +683,7 @@ We evaluated AnoST’s on-chain gas consumption in the Ethereum Virtual Machine 
 \label{fig:gascost}
 \end{figure}
 
-To evaluate the effectiveness of the State Transition Tree (STT) mechanism, we randomly selected 50 transaction batches (2000 transactions each) from Ethereum mainnet, simulating varying erroneous transaction ratios. Table~\ref{tab:rollback-experiment-new} summarizes STT construction times, off-chain storage overhead, on-chain pruning times, and transaction acceptance rates. 
+To evaluate the effectiveness of the State Transition Tree (STT) mechanism, we implemented a deterministic local simulator following the DAG construction, path-inclusion detection, and pruning rules described above. Each trial contains 2000 transactions assigned to 600 dependency paths, and each error-ratio setting is averaged over 50 independently generated batches. Table~\ref{tab:rollback-experiment-new} summarizes local STT construction time, compact off-chain storage overhead, rollback settlement time, and transaction pass rate.
 
 \begin{table}[h!]
 \centering
@@ -694,18 +694,18 @@ To evaluate the effectiveness of the State Transition Tree (STT) mechanism, we r
 \toprule
 Error Ratio (\%) & Build STT (s) & Storage Cost (KB) & Rollback Time (s) & Pass Rate (\%) \\
 \midrule
-0  & 2.02 & 148.3 & 0.00 & 100.0 \\
-5  & 2.14 & 152.7 & 1.72 & 87.8 \\
-10 & 2.12 & 157.0 & 2.41 & 82.9 \\
-15 & 2.05 & 162.5 & 3.07 & 76.1 \\
-20 & 2.15 & 168.2 & 3.88 & 68.3 \\
+0  & 0.0055 & 281.2 & 0.00 & 100.0 \\
+5  & 0.0055 & 281.2 & 0.91 & 89.5 \\
+10 & 0.0055 & 281.2 & 1.56 & 79.6 \\
+15 & 0.0055 & 281.2 & 2.12 & 70.9 \\
+20 & 0.0055 & 281.2 & 2.63 & 62.8 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The results demonstrate that STT provides efficient, precise rollback capability, significantly maintaining higher acceptance rates compared to full-batch rollback strategies. Despite minor increases in storage overhead and pruning time, the STT mechanism substantially reduces overall on-chain computational load.
+The results show that STT construction remains lightweight for 2000-transaction batches, averaging about 5.5 ms in the local simulator. As the error ratio rises, rollback time increases because more dependency paths must be settled, but the mechanism still preserves 62.8\% of transactions at a 20\% error ratio; a full-batch rollback baseline would accept 0\% once any erroneous transaction appears.
 
-We simulated adversarial environments by introducing malicious verifiers into batches of 2000 transactions, testing scenarios with 5\%, 10\%, and 20\% transaction errors. Four defensive mechanisms were evaluated: (1) No Optimization, (2) Path Checking (eliminating redundant challenges via transaction dependency tracking), (3) Blacklist (blocking malicious verifiers), and (4) Combined Optimization (Path Checking and Blacklist). 
+We further evaluated challenge-window duration in seconds using the same 50-batch simulation setting, testing 5\%, 10\%, and 20\% transaction error ratios. Four defensive mechanisms were evaluated: (1) No Optimization, (2) Path Checking, which skips redundant challenges whose dependency suffix has already been invalidated, (3) Blacklist, which blocks previously detected malicious verifiers after a setup cost, and (4) Combined Optimization, which applies both mechanisms.
 
 \begin{figure}[h!]
 \centering
@@ -714,7 +714,7 @@ We simulated adversarial environments by introducing malicious verifiers into ba
 \label{fig:time}
 \end{figure}
 
-Figure~\ref{fig:time} clearly illustrates that the combined optimization strategy effectively reduces the challenge window by up to 65\% compared to unoptimized scenarios. This efficiency improvement indicates AnoST’s robust defense capability against typical adversarial behaviors encountered in real-world optimistic rollup deployments.
+Figure~\ref{fig:time} shows that the unoptimized challenge window ranges from 72.0 s to 210.0 s under the tested error ratios, while the combined optimization reduces it to 50.7 s, 67.0 s, and 94.3 s, respectively. The maximum reduction reaches 55.1\% at a 20\% error ratio, indicating that path pruning and verifier blacklisting keep dispute handling within a short, testable time window.
 
 
 \section{Conclusion and Future Work}
