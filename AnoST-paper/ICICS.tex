@@ -705,6 +705,26 @@ Error Ratio (\%) & Build STT (s) & Storage Cost (KB) & Rollback Time (s) & Pass 
 
 The results show that STT construction remains lightweight for 2000-transaction batches, averaging about 5.5 ms in the local simulator. As the error ratio rises, rollback time increases because more dependency paths must be settled, but the mechanism still preserves 62.8\% of transactions at a 20\% error ratio; a full-batch rollback baseline would accept 0\% once any erroneous transaction appears.
 
+To further validate that the rollback procedure can be demonstrated in a real execution environment, we implemented a minimal STT rollback smart contract and executed it on a local Anvil EVM node using Foundry. The contract commits an STT root, accepts path-level challenge proofs, records pruned paths, and settles the remaining accepted transactions. Table~\ref{tab:evm-rollback-demo} reports the wall-clock time and gas consumption measured from actual RPC transactions.
+
+\begin{table}[h!]
+\centering
+\caption{Local EVM STT Rollback Demo}
+\label{tab:evm-rollback-demo}
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{cccccc}
+\toprule
+Error Ratio (\%) & Challenge Paths & Invalidated TXs & Pass Rate (\%) & EVM Time (s) & Total Gas \\
+\midrule
+5  & 5  & 210 & 89.5 & 6.96  & 585650 \\
+10 & 8  & 409 & 79.5 & 9.95  & 798590 \\
+20 & 10 & 745 & 62.7 & 11.87 & 951930 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The local EVM run completes all three demonstration settings in under 30 seconds excluding one-time compilation, while each individual error-ratio setting completes in less than 12 seconds. This provides a practical demonstration path for the STT rollback logic without relying solely on the deterministic simulator.
+
 We further evaluated challenge-window duration in seconds using the same 50-batch simulation setting, testing 5\%, 10\%, and 20\% transaction error ratios. Four defensive mechanisms were evaluated: (1) No Optimization, (2) Path Checking, which skips redundant challenges whose dependency suffix has already been invalidated, (3) Blacklist, which blocks previously detected malicious verifiers after a setup cost, and (4) Combined Optimization, which applies both mechanisms.
 
 \begin{figure}[h!]

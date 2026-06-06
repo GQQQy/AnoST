@@ -1,0 +1,4 @@
+error_ratio,tx_count,path_count,challenge_paths,invalidated_txs,pass_rate,deploy_time_s,commit_time_s,settle_time_s,total_time_s,deploy_gas,commit_gas,challenge_gas,settle_gas,total_gas
+5,2000,600,5,210,89.5,0.870,1.020,5.941,6.961,453105,119710,417424,48516,585650
+10,2000,600,8,409,79.5,0.870,1.018,8.932,9.950,453105,102610,647452,48528,798590
+20,2000,600,10,745,62.7,0.870,0.773,11.100,11.873,453105,102610,800792,48528,951930

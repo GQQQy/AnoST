@@ -272,30 +272,6 @@ def write_csv(path: Path, rows: list[dict[str, float | str]]) -> None:
         writer.writerows(rows)
 
 
-def plot_rollback(rows: list[dict[str, float]]) -> None:
-    ratios = [row["error_ratio"] for row in rows]
-    pass_rate = [row["pass_rate"] for row in rows]
-    rollback = [row["rollback_time_s"] for row in rows]
-
-    fig, ax1 = plt.subplots(figsize=(7.2, 4.2), dpi=220)
-    ax1.plot(ratios, pass_rate, marker="o", color="#1f77b4", linewidth=2.2, label="Pass rate")
-    ax1.set_xlabel("Error ratio (%)")
-    ax1.set_ylabel("Pass rate (%)", color="#1f77b4")
-    ax1.tick_params(axis="y", labelcolor="#1f77b4")
-    ax1.set_ylim(50, 102)
-    ax1.grid(True, axis="y", linestyle="--", alpha=0.32)
-
-    ax2 = ax1.twinx()
-    ax2.plot(ratios, rollback, marker="s", color="#d62728", linewidth=2.2, label="Rollback time")
-    ax2.set_ylabel("Rollback time (s)", color="#d62728")
-    ax2.tick_params(axis="y", labelcolor="#d62728")
-
-    fig.tight_layout()
-    FIG_DIR.mkdir(parents=True, exist_ok=True)
-    fig.savefig(FIG_DIR / "stt_partial_rollback.png", bbox_inches="tight")
-    plt.close(fig)
-
-
 def plot_challenge_window(rows: list[dict[str, float | str]]) -> None:
     mechanisms = [
         "No Optimization",
@@ -366,7 +342,6 @@ def main() -> None:
 
     write_csv(DATA_DIR / "stt_partial_rollback.csv", stt_rows)
     write_csv(DATA_DIR / "challenge_window.csv", challenge_rows)
-    plot_rollback(stt_rows)
     plot_challenge_window(challenge_rows)
 
     print("STT partial rollback")
